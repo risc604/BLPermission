@@ -1,6 +1,7 @@
 package com.demo.tomcat.blpermission;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,18 +21,22 @@ import android.widget.Toast;
 //https://stackoverflow.com/questions/10748861/how-to-change-screen-timeout-programmatically
 //https://stackoverflow.com/questions/38321834/set-android-screen-timeout-settings-programatically
 //http://techdocs.zebra.com/emdk-for-android/6-3/tutorial/tutMxDisplayManager/
+//https://stackoverflow.com/questions/41457066/how-to-show-alert-dialog-repeatedly-either-user-click-ok
 
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    private final Context context = this.getApplication().getBaseContext();
+    private static Context context;
+    static final int CODE_WRITE_SETTINGS_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() ...");
         setContentView(R.layout.activity_main);
+
+        context = this.getApplication().getBaseContext();
 
 
         try {
@@ -53,24 +58,36 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void checkSystemWritePermission() {
+    public boolean checkSystemWritePermission() {
         boolean permission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             permission = Settings.System.canWrite(context);
         } else {
-            permission = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
+            permission = ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.WRITE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
         }
-        if (permission) {
+
+        if (permission)
+        {
             //do your code
-        }  else {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + context.getPackageName()));
-                startActivityForResult(intent, MainActivity.CODE_WRITE_SETTINGS_PERMISSION);
-            } else {
-                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_SETTINGS}, MainActivity.CODE_WRITE_SETTINGS_PERMISSION);
+        }
+        else
+        {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+            {
+                //Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                //intent.setData(Uri.parse("package:" + context.getPackageName()));
+                //startActivityForResult(intent, MainActivity.CODE_WRITE_SETTINGS_PERMISSION);
+                openAndroidPermissionsMenu();
+            }
+            else
+            {
+                ActivityCompat.requestPermissions((Activity) context,
+                        new String[]{Manifest.permission.WRITE_SETTINGS},
+                        MainActivity.CODE_WRITE_SETTINGS_PERMISSION);
             }
         }
+        return permission;
     }
 
     private void openAndroidPermissionsMenu() {
