@@ -16,6 +16,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -32,10 +37,14 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
 
+    ProgressBar progressBar;
+    ImageView   ivBatBle;
+    Button      btnChanged;
     private static Context context;
     static final int CODE_WRITE_SETTINGS_PERMISSION = 1;
     private static final int REQUEST_INTERNET = 10;
     int count=0;
+    private static boolean btnState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,28 +53,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = this.getApplication().getBaseContext();
+        initView();
+        initControl();
 
-
-        permission_denied();
-
-
-
-        //try {
-        //    if (checkSystemWritePermission())
-        //    {
-        //        //RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, newUri);
-        //        Toast.makeText(context, "Set as ringtoon successfully ", Toast.LENGTH_SHORT).show();
-        //    }
-        //    else
-        //    {
-        //        Toast.makeText(context, "Allow modify system settings ==> ON ", Toast.LENGTH_LONG).show();
-        //    }
-        //}
-        //catch (Exception e)
-        //{
-        //    Log.i("ringtoon",e.toString());
-        //    Toast.makeText(context, "unable to set as Ringtoon ", Toast.LENGTH_SHORT).show();
-        //}
     }
 
     @Override
@@ -90,6 +80,44 @@ public class MainActivity extends AppCompatActivity {
             }
             // other 'case' lines to check for other
             // permissions this app might request
+        }
+    }
+
+    public void onClickChange(View view)
+    {
+
+    }
+
+
+
+    //------------------------- user function -------------------------------//
+    private void initView()
+    {
+        progressBar = findViewById(R.id.pbBLEScan);
+        ivBatBle = findViewById(R.id.ivBatBlue);
+        btnChanged = findViewById(R.id.btnChange);
+    }
+
+    private void initControl()
+    {
+        //permission_denied();
+
+        try
+        {
+            if (checkSystemWritePermission())
+            {
+                //RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, newUri);
+                Toast.makeText(context, "Set as ringtoon successfully ", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(context, "Allow modify system settings ==> ON ", Toast.LENGTH_LONG).show();
+            }
+        }
+        catch (Exception e)
+        {
+            Log.i("ringtoon",e.toString());
+            Toast.makeText(context, "unable to set as setting ", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -136,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Write not allowed :-(", Toast.LENGTH_LONG).show();
                 FragmentManager fm = getFragmentManager();
                 PopupWritePermission dialogFragment = new PopupWritePermission();
-                dialogFragment.show(fm, getString(R.string.popup_writesettings_title));
+                dialogFragment.show(fm, "Write Setting");
             }
         }
         return retVal;
