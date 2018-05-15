@@ -85,7 +85,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickChange(View view)
     {
-
+        if (!btnState)
+        {
+            ivBatBle.setVisibility(View.INVISIBLE);
+            ivBatBle.setEnabled(false);
+            progressBar.setEnabled(true);
+            progressBar.setVisibility(View.VISIBLE);
+            btnState = true;
+        }
+        else
+        {
+            progressBar.setVisibility(View.INVISIBLE);
+            progressBar.setEnabled(false);
+            ivBatBle.setEnabled(true);
+            ivBatBle.setVisibility(View.VISIBLE);
+            btnState = false;
+        }
     }
 
 
@@ -100,7 +115,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initControl()
     {
+        btnState = false;
         //permission_denied();
+        progressBar.setEnabled(false);
+        progressBar.setVisibility(View.INVISIBLE);
+
+        ivBatBle.setEnabled(true);
+        ivBatBle.setVisibility(View.VISIBLE);
 
         try
         {
